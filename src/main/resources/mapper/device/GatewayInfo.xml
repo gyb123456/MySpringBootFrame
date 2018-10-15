@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+      <mapper namespace="com.demo.gyb.dao.device.GatewayInfoMapper">
+          <resultMap id="BaseResultMap" type="com.demo.gyb.entity.device.GatewayInfo">
+              <id column="data_id" jdbcType="INTEGER" property="dataId" />
+              <result column="gate_mac_id" jdbcType="VARCHAR" property="gateMacId" />
+              <result column="device_type" jdbcType="INTEGER" property="deviceType" />
+              <result column="build" jdbcType="INTEGER" property="build" />
+              <result column="status" jdbcType="TINYINT" property="status" />
+              <result column="gain_status_time" jdbcType="TIMESTAMP" property="gainStatusTime" />
+              <result column="upload_status_time" jdbcType="TIMESTAMP" property="uploadStatusTime" />
+              <result column="remark" jdbcType="VARCHAR" property="remark" />
+              <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+              <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+              <result column="name" jdbcType="VARCHAR" property="hardwareName" />
+              <result column="is_warning" jdbcType="TINYINT" property="isWarning" />
+              <result column="type1" jdbcType="TINYINT" property="type1" />
+              <result column="majorVersion" jdbcType="VARCHAR" property="majorVersion" />
+              <result column="networkName" jdbcType="VARCHAR" property="networkName" />
+              <result column="minorVersion" jdbcType="VARCHAR" property="minorVersion" />
+              <result column="network_id" jdbcType="VARCHAR" property="networkId" />
+              <result column="icon_url" jdbcType="VARCHAR" property="iconUrl" />
+              <result column="map_id" jdbcType="INTEGER" property="mapId" />
+              <result column="coordinate_x" jdbcType="DOUBLE" property="coordinate_x" />
+              <result column="coordinate_y" jdbcType="DOUBLE" property="coordinate_y" />
+              <result column="map_name" jdbcType="VARCHAR" property="mapName" />
+          </resultMap>
+  <select id="queryByMacId" parameterType="java.lang.String" resultMap="BaseResultMap">
+      select dgi.*,dng.network_id from db_gateway_info dgi,db_network_gateway dng where dgi.gate_mac_id = #{gateMacId,jdbcType=VARCHAR} and dgi.data_id = dng.gateway_id
+  </select>
+  <insert id="insert" parameterType="com.demo.gyb.entity.device.GatewayInfo" useGeneratedKeys="true" keyProperty = "dataId">
+      insert into db_gateway_info(gate_mac_id,device_type,build,status,gain_status_time,upload_status_time,remark,create_time,modify_time)
+      values (#{gateMacId},#{deviceType},#{build},#{status},#{gainStatusTime},#{uploadStatusTime},#{remark},#{createTime},#{modifyTime})
+  </insert>
+  <update id="updateStatus" parameterType="java.util.Map">
+      update db_gateway_info set upload_status_time = #{uploadStatusTime},modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+      where gate_mac_id = #{gateMacId,jdbcType=VARCHAR}
+  </update>
+          <!--<update id="updateBuild" parameterType="java.util.Map">-->
+      <!--update db_gateway_info set build = #{build}-->
+      <!--where gate_mac_id = #{gateMacId,jdbcType=VARCHAR}-->
+  <!--</update>-->
+          <!--<select id="queryGatewayByNId" parameterType="java.lang.String" resultMap="BaseResultMap">-->
+      <!--select dgi.*, dhi.name from db_gateway_info dgi,db_network_gateway dng , db_hardware_info dhi where-->
+      <!--dgi.data_id = dng.gateway_id and dgi.device_type = dhi.device_type and dng.network_id = #{networkId}-->
+  <!--</select>-->
+          <!--<select id="queryGatewayByNId1" parameterType="java.lang.String" resultMap="BaseResultMap">-->
+      <!--SELECT dgi.* FROM db_network_gateway dng,db_gateway_info dgi where dgi.data_id = dng.gateway_id and dng.network_id = #{networkId}-->
+  <!--</select>-->
+          <!--<select id="queryByLikeMacId" parameterType="java.util.Map" resultType="java.util.Map">-->
+      <!--SELECT dgi.gate_mac_id as gateMacId FROM db_network_gateway dng,db_gateway_info dgi where dgi.data_id = dng.gateway_id and dng.network_id = #{networkId}-->
+       <!--and dgi.gate_mac_id like #{gateMacId} order by dgi.create_time desc-->
+  <!--</select>-->
+          <!--<delete id="deleteByGateMacId" parameterType="java.lang.String">-->
+      <!--delete from db_gateway_info where gate_mac_id = #{gateMacId,jdbcType=VARCHAR}-->
+  <!--</delete>-->
+          <!--<delete id="deleteByNetworkId" parameterType="java.lang.String">-->
+      <!--delete from db_gateway_info where data_id in (select gateway_id from db_network_gateway where network_id = #{networkId})-->
+  <!--</delete>-->
+          <!--<select id="queryByNetworkId" parameterType="java.lang.String" resultMap="BaseResultMap">-->
+      <!--select * from db_gateway_info where data_id in (select gateway_id from db_network_gateway where network_id = #{networkId})-->
+  <!--</select>-->
+          <!--<select id="queryByTimeBeforeNow" resultType="java.util.Map" resultMap="BaseResultMap">-->
+              <!--select dgi.*,dng.network_id from  db_gateway_info dgi,db_network_gateway dng where dng.gateway_id = dgi.data_id and-->
+              <!--dgi.modify_time &lt; #{modifyTime}-->
+              <!--<if test="isWarning != null">-->
+                  <!--and dgi.is_warning=#{isWarning}-->
+              <!--</if>-->
+          <!--</select>-->
+          <!--<update id="updataWarningStatus" parameterType="java.util.Map">-->
+  	 <!--update db_gateway_info set is_warning=#{isWarning} where data_id=#{dataId}-->
+  <!--</update>-->
+          <!--<select id="queryByExample" parameterType="java.util.Map" resultMap="BaseResultMap">-->
+              <!--SELECT * from-->
+              <!--(-->
+              <!--SELECT dgi.data_id, dgi.build,dgi.gate_mac_id,dni.name as networkName,dgi.modify_time,dgi.device_type from db_network_info dni,db_network_gateway dng,db_gateway_info dgi-->
+              <!--where dng.gateway_id = dgi.data_id  and dng.network_id = dni.network_id-->
+              <!--<if test="build != null">-->
+                  <!--and dgi.build = #{build}-->
+              <!--</if>-->
+              <!--<if test="gateMacId != null" >-->
+                  <!--and dgi.gate_mac_id = #{gateMacId}-->
+              <!--</if>-->
+              <!--<if test="networkName != null">-->
+                  <!--and dni.name = #{networkName}-->
+              <!--</if>-->
+              <!--<if test="deviceType != null">-->
+                  <!--and dgi.device_type = #{deviceType}-->
+              <!--</if>-->
+              <!--) as temp1 ,-->
+              <!--(-->
+              <!--SELECT temp4.gate_mac_id,temp4.major_version,temp4.minor_version,temp4.device_type,temp4.build,dhi.`name` as hardwareName,dhi.type1 from db_hardware_info dhi,-->
+              <!--(-->
+              <!--SELECT dgi.gate_mac_id ,dgi.build,dgi.device_type,dfi.build as firmInfoBuild,dfi.major_version,dfi.minor_version FROM `db_gateway_info` dgi LEFT JOIN db_firmware_info dfi on-->
+              <!--dgi.build = dfi.build and dgi.device_type = dfi.device_type-->
+              <!--) as temp4 where temp4.device_type = dhi.device_type-->
+              <!--) as temp3-->
+              <!--WHERE temp1.gate_mac_id = temp3.gate_mac_id ORDER BY data_id DESC-->
+              <!--<if test="startSize !=null and endSize !=null">-->
+                  <!--limit #{startSize},#{endSize}-->
+              <!--</if>-->
+          <!--</select>-->
+          <!--<select id="queryCountByExample" parameterType="java.util.Map" resultType="java.lang.Integer">-->
+              <!--SELECT COUNT(*) from-->
+              <!--(-->
+              <!--SELECT dgi.data_id, dgi.build,dgi.gate_mac_id,dni.name as networkName,dgi.modify_time,dgi.device_type from db_network_info dni,db_network_gateway dng,db_gateway_info dgi-->
+              <!--where dng.gateway_id = dgi.data_id  and dng.network_id = dni.network_id-->
+              <!--<if test="build != null">-->
+                  <!--and dgi.build = #{build}-->
+              <!--</if>-->
+              <!--<if test="gateMacId != null" >-->
+                  <!--and dgi.gate_mac_id = #{gateMacId}-->
+              <!--</if>-->
+              <!--<if test="networkName != null">-->
+                  <!--and dni.name = #{networkName}-->
+              <!--</if>-->
+              <!--<if test="deviceType != null">-->
+                  <!--and dgi.device_type = #{deviceType}-->
+              <!--</if>-->
+              <!--) as temp1 ,-->
+              <!--(-->
+              <!--SELECT temp4.gate_mac_id,temp4.major_version,temp4.minor_version,temp4.device_type,temp4.build,dhi.`name` as hardwareName,dhi.type1 from db_hardware_info dhi,-->
+              <!--(-->
+              <!--SELECT dgi.gate_mac_id ,dgi.build,dgi.device_type,dfi.build as firmInfoBuild,dfi.major_version,dfi.minor_version FROM `db_gateway_info` dgi LEFT JOIN db_firmware_info dfi on-->
+              <!--dgi.build = dfi.build and dgi.device_type = dfi.device_type-->
+              <!--) as temp4 where temp4.device_type = dhi.device_type-->
+              <!--) as temp3-->
+              <!--WHERE temp1.gate_mac_id = temp3.gate_mac_id ORDER BY data_id DESC-->
+          <!--</select>-->
+          <!--&lt;!&ndash; <select id="queryUnConfigDevice" parameterType="java.util.Map" resultMap="BaseResultMap">-->
+               <!--SELECT * from-->
+             <!--(-->
+                 <!--SELECT dgi.data_id,dgi.gate_mac_id,dgi.device_type,dng.network_id,dhi.`name`,dhi.type1,dhi.icon_url from db_gateway_info dgi,db_network_gateway dng,db_hardware_info dhi WHERE-->
+                  <!--dgi.data_id = dng.gateway_id and dhi.device_type = dgi.device_type and dng.network_id = #{networkId}-->
+                  <!--<if test="type1 != null">and dhi.type1 = #{type1}</if>-->
+                  <!--<if test="deviceMacId !=null">AND dgi.gate_mac_id like #{deviceMacId}  </if>-->
+             <!--) as temp2 where temp2.gate_mac_id not in-->
+            <!--(-->
+             <!--SELECT temp1.gate_mac_id from db_map_device as dmd,-->
+             <!--(SELECT dgi.data_id,dgi.gate_mac_id,dgi.device_type,dng.network_id,dhi.`name`,dhi.type1,dhi.icon_url from db_gateway_info dgi,db_network_gateway dng,db_hardware_info dhi WHERE-->
+                  <!--dgi.data_id = dng.gateway_id and dhi.device_type = dgi.device_type and dng.network_id = #{networkId}) as temp1-->
+                 <!--where dmd.network_id = temp1.network_id and dmd.network_id = #{networkId} and dmd.map_id = #{mapId} and dmd.device_mac_id = temp1.gate_mac_id  group by dmd.device_mac_id-->
+            <!--)-->
+           <!--</select> &ndash;&gt;-->
+          <!--<select id="queryAllByNId" parameterType="java.util.Map" resultMap="BaseResultMap">-->
+              <!--SELECT temp1.*,dm.map_name FROM-->
+              <!--(SELECT temp.*,dmd.map_id from-->
+              <!--(SELECT dgi.data_id,dgi.gate_mac_id,dgi.device_type,dng.network_id,dhi.`name`,dhi.type1,dhi.icon_url from db_gateway_info dgi,db_network_gateway dng,db_hardware_info dhi WHERE-->
+              <!--dgi.data_id = dng.gateway_id and dhi.device_type = dgi.device_type and dng.network_id = #{networkId}-->
+              <!--<if test="type1 != null">and dhi.type1 = #{type1}</if>-->
+              <!--<if test="deviceMacId != null">and dgi.gate_mac_id like #{deviceMacId} </if>-->
+              <!--order by dgi.data_id desc-->
+              <!--&lt;!&ndash; <if test="startSize !=null and endSize !=null">limit #{startSize},#{endSize}</if> &ndash;&gt;-->
+              <!--)as temp LEFT JOIN db_map_device dmd ON  temp.gate_mac_id = dmd.device_mac_id-->
+              <!--) as temp1 LEFT JOIN db_map dm on temp1.map_id = dm.map_id-->
+          <!--</select>-->
+          <!--<select id="queryAllCountByNId" parameterType="java.util.Map" resultType="java.lang.Integer">-->
+              <!--SELECT count(*) from db_gateway_info dgi,db_network_gateway dng,db_hardware_info dhi WHERE-->
+              <!--dgi.data_id = dng.gateway_id and dhi.device_type = dgi.device_type and dng.network_id = #{networkId}-->
+              <!--<if test="type1 != null">and dhi.type1 = #{type1}</if>-->
+              <!--<if test="deviceMacId != null">and dgi.gate_mac_id like #{deviceMacId} </if>-->
+          <!--</select>-->
+          <!--<select id="queryDeviceOnMap" parameterType="java.util.Map" resultMap="BaseResultMap">-->
+  	<!--SELECT temp.* ,dmd.coordinate_x ,dmd.coordinate_y,dmd.map_id  from  (-->
+		<!--SELECT dgi.device_type,dhi.`name`,dhi.icon_url,dgi.gate_mac_id  FROM db_gateway_info dgi,db_network_gateway dng, db_hardware_info dhi where-->
+			<!--dgi.data_id =dng.gateway_id and dng.network_id =  #{networkId} and dgi.gate_mac_id = #{deviceMacId} and dgi.device_type = dhi.device_type  ) as temp-->
+	 <!--LEFT JOIN db_map_device dmd ON temp.gate_mac_id = dmd.device_mac_id-->
+  	<!--</select>-->
+      </mapper>
